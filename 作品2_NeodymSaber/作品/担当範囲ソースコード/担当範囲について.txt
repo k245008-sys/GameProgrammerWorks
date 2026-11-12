@@ -1,0 +1,57 @@
+
+		
+担当箇所
+	
+　　　　・カメラ
+	　三人称カメラ、カメラの挙動制御、カメラでの
+	　画面振動再現、カメラ演出(ゲームクリア、
+	　ゲームオーバー時のカメラの動き)を作成。
+
+
+	・担当箇所保存先
+	　ソーリューションエクスプローラーからPlaySceneの
+	　フォルダ内にあるCameraフォルダ内にあります。
+	　その中にあるCameraBase、CameraState、Mainの
+	　各フォルダ内にある.cppファイルと.hファイルが制作範囲です。
+
+
+	・各範囲の制作理由
+
+	　CameraBase
+	　カメラクラスを複数制作する時の基底クラス
+
+	　Camera
+	　プレイヤーキャラ用カメラクラスです。
+	　カメラの挙動制御用関数や画面振動用の関数
+	  を持ちます。
+
+	　CameraStateBase
+	　各種CameraState
+	　プレイヤーキャラの動きに合わせたカメラワークや
+	　動きを作るクラス
+	　
+フォルダの階層図
+
+project/
+└── PlayScene/
+    └── Camera/
+        ├── CameraBase/
+        │   ├── CameraBase.cpp
+        │   └── CameraBase.h
+        ├── CameraState/
+	│※ CameraStateフォルダには、各カメラステートの処理を実装した複数の.cppファイルと.hファイルを格納しています。
+        │   ├── 各CameraState.cpp
+        │   └── 各CameraState.h
+        └── Main/
+            ├── Camera.cpp
+            └── Camera.h
+
+特に見てほしい場所
+
+上記の図のMainの下にあるCamera.cppです。
+
+詳しい実装内容はお手数ですがポートフォリオを閲覧して頂くと分かりやすいと思います。
+
+
+
+

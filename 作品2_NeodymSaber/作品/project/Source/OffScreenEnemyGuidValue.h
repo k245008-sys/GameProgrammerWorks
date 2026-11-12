@@ -1,0 +1,13 @@
+#pragma once
+
+
+namespace
+{
+	const VECTOR OFF_SCREEN_ENEMY_GUID_SCALE = VGet(0.25f, 0.35f, 0.25f);
+	const VECTOR OFF_SCREEN_ENEMY_GUID_ADJUST_BASE_POS = VGet(0, 100.0f, 0);
+	const float OFF_SCREEN_ENEMY_GUID_DIST_TO_PLAYER = 150.0f;
+	const float OFF_SCREEN_ENEMY_GUID_ENABLE_TARGET_DIST = 8000.0f;
+
+	const COLOR_F OFF_SCREEN_ENEMY_GUID_AMB_COLOR = GetColorF(0.5f, 0.5f, 0.5f, 1.0f);
+	const float OFF_SCREEN_ENEMY_GUID_ALPHA = 0.9f;
+}

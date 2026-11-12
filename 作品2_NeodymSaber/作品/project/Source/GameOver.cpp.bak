@@ -1,0 +1,239 @@
+#include "GameOver.h"
+#include"ScoreManager.h"
+#include"InputManager.h"
+#include <assert.h>
+#include "../Library/Time.h"
+#include "EffectManager.h"
+#include "SoundManager.h"
+#include "playScene.h"
+
+
+GameOver::GameOver()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		hImage[i] = -1;
+	}
+	hImage[0] = LoadGraph("data\\texture\\gameover_misson_unco-1.png");
+	assert(hImage[0] >= 0);
+
+	hImage[1] = LoadGraph("data\\texture\\gameover_fleam2-1.png");
+	assert(hImage[1] >= 0);
+
+	hImage[2] = LoadGraph("data\\texture\\gameover_fleam2-2.png");
+	assert(hImage[2] >= 0);
+
+	hImage[3] = LoadGraph("data\\texture\\gameover_Blackout-1.png");
+	assert(hImage[3] >= 0);
+
+	hImage[4] = LoadGraph("data\\texture\\rizaruto_ritorai-1.png");
+	assert(hImage[4] >= 0);
+
+	hImage[5] = LoadGraph("data\\texture\\rizaruto_botan-1.png");
+	assert(hImage[5] >= 0);
+
+	hImage[6] = LoadGraph("data\\texture\\rizaruto_title.png");
+	assert(hImage[6] >= 0);
+
+	hImage[7] = LoadGraph("data\\texture\\rizaruto_botan-2.png");
+	assert(hImage[7] >= 0);
+
+	hImage[8] = LoadGraph("data\\texture\\re_try_botan-1back.png");
+	assert(hImage[8] >= 0);
+
+	hImage[9] = LoadGraph("data\\texture\\rizaruto_botan-23.png");
+	assert(hImage[9] >= 0);
+
+	Reset();
+
+	input = SceneManager::CommonScene()->FindGameObject<InputManager>();
+}
+
+GameOver::~GameOver()
+{
+	SoundManager* sound = SceneManager::CommonScene()->FindGameObject<SoundManager>();
+	sound->Stop("GameOverBgm");
+	for (int i = 0; i < (int)(sizeof(hImage) / sizeof(hImage[0])); i++)
+	{
+		if (hImage[i] > 0)
+		{
+			DeleteGraph(hImage[i]);
+		}
+	}
+}
+
+void GameOver::Update()
+{
+	SoundManager* sound = SceneManager::CommonScene()->FindGameObject<SoundManager>();
+
+	if (!sound->IsPlay("GameOverBgm"))
+	{
+		sound->Play("GameOverBgm", false);
+	}
+
+	if (scaletimey > 0.0f)
+	{
+		scaletimey -= Time::GameDeltaTime();
+
+		alphaNum += 3;
+		backalupa_num += 3;
+		blackalupa_num += 3;
+		restrt = false;
+	}
+	else
+		restrt = true;
+
+	scaletimex -= Time::GameDeltaTime();
+
+	if (input->CheckKeyPushAllDown())
+	{
+		alphaNum = 255;
+	}
+	if (backalupa_num > 150)
+	{
+		backalupa_num = 150;
+	}
+
+	if (alphaNum > 175)
+	{
+		blackalupa_num = 175;
+	}
+
+	if (alphaNum > 255)
+	{
+		alphaNum = 255;
+	}
+
+	if (restrt)
+	{
+
+		if (input->IsPadPushDown("Left"))
+		{
+			SoundManager* sound = SceneManager::CommonScene()->FindGameObject<SoundManager>();
+			sound->Play("Cursor");
+			retlai = true;
+		}
+		else if (input->IsPadPushDown("Right"))
+		{
+			SoundManager* sound = SceneManager::CommonScene()->FindGameObject<SoundManager>();
+			sound->Play("Cursor");
+			retlai = false;
+		}
+
+		if (retlai)
+		{
+			if (input->IsPadPush("2"))
+			{
+				EffectManager* effect = SceneManager::CommonScene()->FindGameObject<EffectManager>();
+				effect->Reset();
+				SoundManager* sound = SceneManager::CommonScene()->FindGameObject<SoundManager>();
+				sound->Play("Push");
+				SceneBase* scene = SceneManager::CurrentScene();
+				PlayScene* pScene = dynamic_cast<PlayScene*>(scene);
+				pScene->Restart();
+				Reset();
+			}
+		}
+		else
+		{
+			if (input->IsPadPush("2"))
+			{
+				SoundManager* sound = SceneManager::CommonScene()->FindGameObject<SoundManager>();
+				sound->Play("Push");
+				SceneBase* scene = SceneManager::CurrentScene();
+				PlayScene* pScene = dynamic_cast<PlayScene*>(scene);
+				pScene->ChangeState(PlayState::TITLE);
+				Reset();
+			}
+		}
+	}
+}
+
+void GameOver::Draw()
+{
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, backalupa_num);
+	DrawBox(0, 0, 1920, 1080, 0xFFFFFF, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, blackalupa_num);
+	DrawRectGraph(0, 0, 0, 0, 1920, 1080, hImage[3], true, false);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+
+
+	float yscale = 968;
+
+	float ratey = scaletimey / 2.0f;
+
+	float skaley = ratey * yscale;
+
+	float newscaley = 0 - skaley;
+
+	scaley = newscaley;
+
+
+	float xscale = 960;
+
+	float rate = scaletimex / 2.0f;
+
+	float skale = rate * xscale;
+
+	float newscale = 0 - skale;
+
+	DrawRectGraph(0, 20, scaley, 0, 970, 1080, hImage[1], true, false);
+
+	DrawRectGraph(960, 20, 0, 0, newscale, 1080, hImage[2], true, false);
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaNum);
+	DrawRectGraph(0, 20, 0, 0, 1920, 1080, hImage[0], true, false);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	if (restrt)
+	{
+
+		if (retlai)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
+			SetDrawBright(112,128 ,144);
+			DrawRectGraph(-480, -20, 0, 0, 1920, 1080, hImage[9], true, false);
+			SetDrawBright(255, 255, 255);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+		else
+			DrawRectGraph(0, -20, 0, 0, 1920, 1080, hImage[5], true, false);
+
+		if (!retlai)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
+			SetDrawBright(112, 128, 144);
+			DrawRectGraph(0, -20, 0, 0, 1920, 1080, hImage[9], true, false);
+			SetDrawBright(255, 255, 255);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+		else
+			DrawRectGraph(0, -20, 0, 0, 1920, 1080, hImage[7], true, false);
+
+
+		DrawRectGraph(0, -20, 0, 0, 1920, 1080, hImage[4], true, false);
+		DrawRectGraph(0, -20, 0, 0, 1920, 1080, hImage[6], true, false);
+	}
+
+}
+
+void GameOver::Reset()
+{
+	SoundManager* sound = SceneManager::CommonScene()->FindGameObject<SoundManager>();
+	sound->Stop("GameOverBgm");
+
+	velocity = 0.0f;
+	scaletimex = 0.0f;
+	scaletimey = 2.0f;
+
+	scalex = 0.0f;
+	scaley = 0;
+	blackalupa_num = 0;
+	alphaNum = 0;
+	backalupa_num = 0;
+	retlai = true;
+	restrt = false;
+}
