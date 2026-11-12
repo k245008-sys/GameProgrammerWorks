@@ -1,2 +1,0 @@
-# GameProgrammerWorks
-MyGameDevelopmentWorls
